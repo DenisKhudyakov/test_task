@@ -1,10 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from config.settings import NULLABLE
 
 
 class Worker(AbstractUser):
     """Модель пользователя, он же рабочий компании"""
+
     name: str = models.CharField(max_length=100, verbose_name="Имя")
     email: str = models.EmailField(unique=True, verbose_name="Email", **NULLABLE)
     company: str = models.CharField(max_length=100, verbose_name="Компания", **NULLABLE)

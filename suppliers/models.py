@@ -2,6 +2,7 @@
 Здесь находятся модели приложения поставщиков и их связи
 Модели: Завод, Индивидуальный Предприниматель, Розничная Сеть, Контакты, Продукты
 """
+
 import datetime
 
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -13,6 +14,7 @@ from config.settings import NULLABLE
 
 class Contacts(models.Model):
     """Модель контактов поставщика"""
+
     email: str = models.EmailField(max_length=100, unique=True, verbose_name="Email")
     country: str = models.CharField(max_length=50, verbose_name="Страна")
     city: str = models.CharField(max_length=50, verbose_name="Город")
@@ -29,6 +31,7 @@ class Contacts(models.Model):
 
 class Products(models.Model):
     """Модель продуктов поставщика"""
+
     name: str = models.CharField(max_length=50, verbose_name="Название")
     model: str = models.CharField(max_length=50, verbose_name="Модель")
     data: str = models.DateField(verbose_name="Дата выпуска")
@@ -47,10 +50,17 @@ class Factory(models.Model):
     по ТЗ должно быть поле задолженности, но т.к. завод имеет нулевой уровень в иерархии,
     по умолчанию он никому не должен
     """
+
     name: str = models.CharField(max_length=50, verbose_name="Название")
-    contacts: Contacts = models.OneToOneField(Contacts, on_delete=models.CASCADE, verbose_name="Контакты", **NULLABLE)
-    products: Products = models.ManyToManyField(Products, verbose_name="Продукты", **NULLABLE)
-    date: str = models.DateField(verbose_name="Дата создания организации", default=datetime.date.today)
+    contacts: Contacts = models.OneToOneField(
+        Contacts, on_delete=models.CASCADE, verbose_name="Контакты", **NULLABLE
+    )
+    products: Products = models.ManyToManyField(
+        Products, verbose_name="Продукты", **NULLABLE
+    )
+    date: str = models.DateField(
+        verbose_name="Дата создания организации", default=datetime.date.today
+    )
 
     def __str__(self) -> str:
         return f"{self.name}, {self.contacts}, {self.products}"
@@ -65,12 +75,21 @@ class RetailNetwork(models.Model):
     Модель розничной сети, уровень в иерархии №1, официальный диллер завода изготовителя
     Может иметь задолженность перед заводом
     """
+
     name: str = models.CharField(max_length=50, verbose_name="Название")
-    contacts: Contacts = models.OneToOneField(Contacts, on_delete=models.CASCADE, verbose_name="Контакты", **NULLABLE)
-    products: Products = models.ManyToManyField(Products, verbose_name="Продукты", **NULLABLE)
-    supplier: Factory = models.ForeignKey(Factory, on_delete=models.CASCADE, verbose_name="Поставщик", **NULLABLE)
+    contacts: Contacts = models.OneToOneField(
+        Contacts, on_delete=models.CASCADE, verbose_name="Контакты", **NULLABLE
+    )
+    products: Products = models.ManyToManyField(
+        Products, verbose_name="Продукты", **NULLABLE
+    )
+    supplier: Factory = models.ForeignKey(
+        Factory, on_delete=models.CASCADE, verbose_name="Поставщик", **NULLABLE
+    )
     arrears: float = models.FloatField(verbose_name="Сумма задолженности", default=0)
-    date: str = models.DateField(verbose_name="Дата создания организации", default=datetime.date.today)
+    date: str = models.DateField(
+        verbose_name="Дата создания организации", default=datetime.date.today
+    )
 
     def __str__(self) -> str:
         return f"{self.name}, {self.contacts}, {self.products}, {self.arrears}"
@@ -86,13 +105,29 @@ class IndividualEntrepreneur(models.Model):
     может иметь задолженность перед заводом и перед розничной сетью,
     поставщики: Завод, Розничная сеть
     """
+
     name: str = models.CharField(max_length=50, verbose_name="Название")
-    contacts: Contacts = models.OneToOneField(Contacts, on_delete=models.CASCADE, verbose_name="Контакты", **NULLABLE)
-    products: Products = models.ManyToManyField(Products, verbose_name="Продукты", **NULLABLE)
-    supplier_content__type = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name="Тип поставщика",
-                                               limit_choices_to={"model__in": ("Factory", "RetailNetwork")}, **NULLABLE)
-    supplier_object_id = models.PositiveIntegerField(verbose_name="ID поставщика", **NULLABLE)
-    supplier = GenericForeignKey('supplier_content__type', 'supplier_object_id')
+    contacts: Contacts = models.OneToOneField(
+        Contacts, on_delete=models.CASCADE, verbose_name="Контакты", **NULLABLE
+    )
+    products: Products = models.ManyToManyField(
+        Products, verbose_name="Продукты", **NULLABLE
+    )
+    supplier_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        verbose_name="Тип поставщика",
+        limit_choices_to={"model__in": ("Factory", "RetailNetwork")},
+        **NULLABLE,
+    )
+    supplier_object_id = models.PositiveIntegerField(
+        verbose_name="ID поставщика", **NULLABLE
+    )
+    supplier = GenericForeignKey("supplier_content_type", "supplier_object_id")
+    arrears: float = models.FloatField(verbose_name="Сумма задолженности", default=0)
+    date: str = models.DateField(
+        verbose_name="Дата создания организации", default=datetime.date.today
+    )
 
     def __str__(self) -> str:
         return f"{self.name}, {self.contacts}, {self.products}, {self.supplier}"

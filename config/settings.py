@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
-from dotenv import load_dotenv, find_dotenv
+
+from dotenv import find_dotenv, load_dotenv
 
 if not find_dotenv():
     exit("Файл .env не найден")
@@ -44,10 +46,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    #settings_app
+    # settings_app
     "rest_framework",
     "rest_framework_simplejwt",
-    #my_app
+    # my_app
     "suppliers",
     "workers",
 ]
@@ -150,7 +152,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-NULLABLE = {'null': True, 'blank': True}
+NULLABLE = {"null": True, "blank": True}
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
