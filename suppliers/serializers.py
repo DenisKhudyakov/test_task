@@ -3,6 +3,7 @@
 """
 
 from rest_framework import serializers
+
 from suppliers.models import NetworkNode, Products
 
 
@@ -18,7 +19,9 @@ class NetworkNodeSerializer(serializers.ModelSerializer):
     """Сериализатор для торгующей сети"""
 
     products: ProductSerializer = ProductSerializer(many=True, read_only=True)
-    hierarchy_level = serializers.IntegerField(source="get_hierarchy_level", read_only=True)
+    hierarchy_level = serializers.IntegerField(
+        source="get_hierarchy_level", read_only=True
+    )
 
     class Meta:
         model = NetworkNode
@@ -32,7 +35,8 @@ class NetworkNodeSerializer(serializers.ModelSerializer):
             "house_number",
             "supplier",
             "debt",
-            "creation_time",
+            "creation_date",
             "hierarchy_level",
             "products",
         ]
+        read_only_fields: list[str] = ["debt"]

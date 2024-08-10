@@ -4,9 +4,8 @@
 Модель Product это продукт, которые реализует поставщик
 """
 
-from django.utils import timezone
-
 from django.db import models
+from django.utils import timezone
 
 from config.settings import NULLABLE
 

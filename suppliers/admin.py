@@ -6,6 +6,7 @@ from suppliers.models import NetworkNode, Products
 @admin.register(NetworkNode)
 class NetworkNodeAdmin(admin.ModelAdmin):
     """Админ панель сети"""
+
     list_display: tuple[str] = (
         "id",
         "name",
@@ -16,13 +17,23 @@ class NetworkNodeAdmin(admin.ModelAdmin):
         "house_number",
         "supplier",
         "debt",
-        "creation_time",
+        "creation_date",
         "hierarchy_level",
-        "products",
     )
     list_filter: tuple[str] = ("city",)
-    search_fields: tuple[str] = ("name", "city",)
-    actions = ["clear_debt",]
+    search_fields: tuple[str] = (
+        "name",
+        "city",
+    )
+    actions = [
+        "clear_debt",
+    ]
+
+    def hierarchy_level(self, obj):
+        """Уровень иерархии поставщика"""
+        return obj.get_hierarchy_level()
+
+    hierarchy_level.short_description = "Hierarchy Level"
 
     def supplier_link(self, obj):
         """Ссылка на товар"""
@@ -31,7 +42,7 @@ class NetworkNodeAdmin(admin.ModelAdmin):
         return "Нет данных поставщика"
 
     supplier_link.allow_tags = True
-    supplier_link.short_description = 'Supplier'
+    supplier_link.short_description = "Supplier"
 
     def clear_debt(self, request, queryset):
         """Очистка долга"""
@@ -44,5 +55,9 @@ class NetworkNodeAdmin(admin.ModelAdmin):
 @admin.register(Products)
 class ProductsAdmin(admin.ModelAdmin):
     """Админ панель товаров"""
+
     list_display: tuple[str] = ("id", "name", "model", "data")
-    search_fields: tuple[str] = ("name", "model",)
+    search_fields: tuple[str] = (
+        "name",
+        "model",
+    )

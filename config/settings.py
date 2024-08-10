@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # settings_app
     "rest_framework",
     "rest_framework_simplejwt",
+    "drf_yasg",
     # my_app
     "suppliers",
     "workers",
